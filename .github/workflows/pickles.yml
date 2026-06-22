@@ -1,5 +1,5 @@
-# This workflow will generate the living documentation
-# For more information see: https://github.com/prmiguel/docker-pickles
+# Generates living documentation from Gherkin feature files using the Pickles Docker image
+# For more information see: https://github.com/prmiguel/pickles-report
 
 name: Pickles Living Documentation
 
@@ -11,12 +11,13 @@ on:
 
 jobs:
   living-documentation:
-
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: docker://ghcr.io/prmiguel/docker-pickles:v3.0.1
+    - uses: actions/checkout@v7
+    - uses: docker://ghcr.io/prmiguel/pickles-report:latest
       with:
         args: >-
           --feature-directory=./src/test/resources/features
@@ -24,12 +25,12 @@ jobs:
           -df=dhtml
     - name: Rename index.html file
       run: sudo cp ./report/Index.html ./report/index.html
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: pickles
         path: report/
-    - name: Publish
-      uses: JamesIves/github-pages-deploy-action@4.1.1
+    - name: Publish to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4.6.9
       with:
         branch: pickles-pages
         folder: report/
