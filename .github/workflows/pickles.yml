@@ -12,9 +12,18 @@ on:
 jobs:
   living-documentation:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
 
     steps:
     - uses: actions/checkout@v7
+    - name: Log into GHCR
+      uses: docker/login-action@v4.2.0
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     - uses: docker://ghcr.io/prmiguel/pickles-report:latest
       with:
         args: >-
